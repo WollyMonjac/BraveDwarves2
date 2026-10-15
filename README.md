@@ -1,5 +1,7 @@
 # Vaprad Päkapikud (Brave Dwarves 2) in the browser
 
+[PLAY IT HERE!](https://wollymonjac.github.io/BraveDwarves2/)
+
 ![Gameplay screenshot](screenshot.png)
 
 *Brave Dwarves 2 Gold* (2003) was one of my favourite childhood games. I played the Estonian edition, *Vaprad Päkapikud*. This is a port that runs in any modern browser, on a computer or a phone, with nothing to install.
@@ -23,7 +25,3 @@ python3 play.py
 This starts a small local server and opens the game. Any static web server works; opening `index.html` straight from disk doesn't.
 
 **Controls:** arrow keys to move, Space to jump, Ctrl or X to fire, Z to switch weapons, Tab or M for the map, Esc for the menu. Gamepads also work. On phones, on-screen buttons appear.
-
-## Note
-
-The original graphics, sounds, music and levels belong to their rights holders. This is a non-commercial fan project.
