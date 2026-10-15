@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<title>Vaprad Päkapikud</title>
+<style>
+  /* One dark, full-bleed game screen: the 800x600 canvas is centered and scaled; touch controls float over the margins. */
+  :root {
+    color-scheme: dark;
+    --bg: #000;
+    --gold: #f2d27a;
+    --bark: rgba(90, 55, 15, 0.42);
+    --bark-on: rgba(255, 200, 90, 0.6);
+    --rim: rgba(255, 220, 140, 0.48);
+    --label: #fff3cf;
+    --err: #ff8a80;
+    --ui: Tahoma, Verdana, "DejaVu Sans", sans-serif;
+  }
+  html { height: 100%; box-sizing: border-box; }
+  body {
+    height: 100%; margin: 0; background: var(--bg); color: var(--gold); overflow: hidden;
+    touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    font-family: var(--ui); box-sizing: border-box;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  #wrap { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+  canvas#screen { display: block; background: var(--bg); touch-action: none; outline: none; }
+  #err { position: absolute; top: 10px; left: 10px; right: 10px; color: var(--err); font-size: 14px; pointer-events: none; z-index: 20; }
+  #touch { position: absolute; inset: 0; pointer-events: none; display: none; }
+  body.touch.ingame #touch { display: block; }
+  #dpad { position: absolute; left: 4px; bottom: max(14px, env(safe-area-inset-bottom, 0px)); width: 150px; height: 150px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,230,160,0.10) 0%, rgba(255,230,160,0.18) 60%, rgba(120,80,20,0.25) 100%);
+    border: 2px solid var(--rim); pointer-events: auto; touch-action: none; }
+  #dpad .knob { position: absolute; left: 50%; top: 50%; width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%;
+    background: rgba(255,225,150,0.35); border: 2px solid rgba(255,235,180,0.55); transition: transform 0.05s; }
+  .btn { position: absolute; pointer-events: auto; touch-action: none; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: var(--label); font: bold 15px var(--ui); text-shadow: 0 1px 2px #000; border: 2px solid var(--rim); background: var(--bark); }
+  .btn.on { background: var(--bark-on); }
+  .btn[data-btn=jump] { right: 6px; bottom: max(22px, env(safe-area-inset-bottom, 0px)); width: 82px; height: 82px; }
+  .btn[data-btn=fire] { right: 98px; bottom: max(66px, env(safe-area-inset-bottom, 0px)); width: 76px; height: 76px; }
+  .btn[data-btn=next] { right: 14px; bottom: 120px; width: 54px; height: 54px; font-size: 12px; }
+  .btn.small { width: 46px; height: 46px; font-size: 12px; border-radius: 12px; }
+  .btn[data-btn=map] { top: max(10px, env(safe-area-inset-top, 0px)); right: 62px; }
+  .btn[data-btn=esc] { top: max(10px, env(safe-area-inset-top, 0px)); right: 6px; }
+  #fs { position: absolute; top: max(8px, env(safe-area-inset-top, 0px)); left: 4px; z-index: 5; width: 40px; height: 40px; border-radius: 10px;
+    border: 1px solid var(--rim); background: var(--bark); color: var(--gold); font-size: 20px; display: none; }
+  #fs:focus-visible, .btn:focus-visible { outline: 2px solid var(--gold); }
+  body.touch #fs { display: block; }
+  body.touch.ingame #fs { display: none; }
+  #rotate { position: absolute; left: 0; right: 0; top: max(8px, env(safe-area-inset-top, 0px)); display: none; flex-direction: column; align-items: center;
+    text-align: center; color: var(--gold); font: 17px var(--ui); padding-block: 8px; pointer-events: none; z-index: 6; }
+  #rotate small { font-size: 13px; opacity: 0.8; }
+  body.portrait #rotate { display: flex; }
+  body.portrait.ingame #rotate { display: none; }
+  body.portrait .btn[data-btn=map], body.portrait .btn[data-btn=esc] { top: auto; bottom: 230px; }
+  @media (max-height: 420px) {
+    #dpad { width: 120px; height: 120px; }
+    .btn[data-btn=jump] { width: 68px; height: 68px; }
+    .btn[data-btn=fire] { width: 64px; height: 64px; right: 80px; bottom: 56px; }
+    .btn[data-btn=next] { bottom: 98px; }
+  }
+  @media (prefers-reduced-motion: reduce) { #dpad .knob { transition: none; } }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="screen" width="800" height="600" tabindex="0" aria-label="Vaprad Päkapikud mänguekraan"></canvas>
+  <div id="touch">
+    <div id="dpad"><div class="knob"></div></div>
+    <div class="btn" data-btn="jump">HÜPPA</div>
+    <div class="btn" data-btn="fire">TULISTA</div>
+    <div class="btn" data-btn="next">RELV</div>
+    <div class="btn small" data-btn="map">KAART</div>
+    <div class="btn small" data-btn="esc">☰</div>
+  </div>
+  <button id="fs" title="Täisekraan" aria-label="Täisekraan" onclick="window.bd2Fullscreen && window.bd2Fullscreen()">⛶</button>
+  <div id="rotate">Pööra telefon rõhtasendisse<small>Vaprad Päkapikud on mõeldud laiale ekraanile</small></div>
+  <div id="err"></div>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

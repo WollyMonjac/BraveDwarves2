@@ -1,0 +1,26 @@
+VAPRAD PÄKAPIKUD – brauseriversioon
+===================================
+
+Käivitamine arvutis
+  1. Paki zip lahti.
+  2. Käivita "python play.py" (vajab Python 3) – mäng avaneb brauseris.
+     Või pane kaust ükskõik millisesse staatilisse veebimajutusse (nt GitHub Pages,
+     Netlify) ja ava index.html. Otse failina (file://) mäng ei käivitu,
+     sest brauserid ei luba nii mängu andmeid laadida.
+
+Juhtimine
+  Nooled ........ liikumine, trepid (Üles/Alla), Alla = teleport, pood ja värav
+  Tühik ......... hüpe
+  Ctrl (või X) .. tulista
+  Z ............. järgmine relv
+  Tab (või M) ... kaart
+  Esc ........... menüü (salvesta, lae, valikud)
+  F6 / F9 ....... kiirsalvestus / kiirlaadimine
+  Mängupult ..... A hüpe, X/B tulista, Y relv, Back kaart, Start menüü
+  Telefonis ..... juhtkang vasakul, HÜPPA / TULISTA / RELV paremal, KAART ja ☰ üleval
+
+Märkused
+  * Salvestused, rekordid ja seaded hoitakse brauseri mälus (localStorage).
+  * Valikutes saab lubada kõik episoodid korraga ("Kõik episoodid avatud").
+  * Mängu graafika, helid ja muusika pärinevad sinu originaalmängust
+    (GameOver Games / ASECOM, 2003). Ära jaga seda koopiat edasi.
